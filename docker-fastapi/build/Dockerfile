@@ -11,6 +11,7 @@ RUN apt-get update \
 	python3.11 \
 	python3.11-venv \
 	zsh \
+	build-essential \
 	&& rm -rf /var/lib/apt/lists/*
 
 ARG USER=coder
