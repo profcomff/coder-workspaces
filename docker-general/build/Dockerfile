@@ -8,6 +8,10 @@ RUN apt-get update \
 	sudo \
 	vim \
 	wget \
+	python3.11 \
+	python3.11-venv \
+	zsh \
+	&& sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
 	&& rm -rf /var/lib/apt/lists/*
 
 ARG USER=coder

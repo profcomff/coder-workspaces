@@ -1,8 +1,8 @@
 ---
-display_name: Docker Containers
+display_name: Docker Default
 description: Provision Docker containers as Coder workspaces
-icon: ../../../site/static/icon/docker.png
-maintainer_github: coder
+icon: ./docker.png
+maintainer_github: dyakovri
 verified: true
 tags: [docker, container]
 ---

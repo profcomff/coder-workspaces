@@ -120,7 +120,7 @@ resource "coder_agent" "main" {
 resource "coder_app" "code-server" {
   agent_id     = coder_agent.main.id
   slug         = "code-server"
-  display_name = "code-server"
+  display_name = "Code Server"
   url          = "http://localhost:13337/?folder=/home/${local.username}"
   icon         = "/icon/code.svg"
   subdomain    = false
@@ -157,6 +157,10 @@ resource "docker_volume" "home_volume" {
   labels {
     label = "coder.workspace_name_at_creation"
     value = data.coder_workspace.me.name
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "coder"
   }
 }
 
@@ -209,5 +213,9 @@ resource "docker_container" "workspace" {
   labels {
     label = "coder.workspace_name"
     value = data.coder_workspace.me.name
+  }
+  labels {
+    label = "com.docker.compose.project"
+    value = "coder"
   }
 }
