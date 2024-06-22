@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM python:3.11
 
 RUN apt-get update \
 	&& apt-get install -y \
@@ -8,8 +8,6 @@ RUN apt-get update \
 	sudo \
 	vim \
 	wget \
-	python3.11 \
-	python3.11-venv \
 	zsh \
 	build-essential \
 	&& rm -rf /var/lib/apt/lists/*
