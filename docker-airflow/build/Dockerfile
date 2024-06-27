@@ -20,6 +20,6 @@ RUN useradd --groups sudo --no-create-home --shell /bin/bash ${USER} \
 
 USER ${USER}
 WORKDIR /home/${USER}
-ADD ./fastapi.code-workspace /home/${USER}/fastapi.code-workspace
+ADD ./airflow.code-workspace /home/${USER}/airflow.code-workspace
 RUN sudo chown -R ${USER} /home/${USER} \
 	&& sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
