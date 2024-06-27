@@ -10,6 +10,7 @@ RUN apt-get update \
 	wget \
 	zsh \
 	build-essential \
+	&& npm install -g pnpm \
 	&& rm -rf /var/lib/apt/lists/*
 
 ARG USER=coder
