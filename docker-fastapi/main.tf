@@ -47,6 +47,12 @@ resource "coder_agent" "main" {
     if [ ! -f ~/.init_done ]; then
       cp -rT /etc/skel ~
       git clone ${data.coder_parameter.REPO.value} "/home/${local.username}/${data.coder_parameter.FOLDER.value}"
+      sed -i -e \
+        's/\"path\": \"\/home\/coder\/src\"/\"path\": \"\/home\/${local.username}\/${data.coder_parameter.FOLDER.value}\"/g' \
+        /home/${local.username}/fastapi.code-workspace
+      sed -i -e \
+        's/\"name\": \"src\"/\"name\": \"${data.coder_parameter.FOLDER.value}\"/g' \
+        /home/${local.username}/fastapi.code-workspace
       touch ~/.init_done
     fi
 
@@ -137,7 +143,7 @@ resource "coder_app" "code-server" {
   agent_id     = coder_agent.main.id
   slug         = "code-server"
   display_name = "Code Server"
-  url          = "http://localhost:13337/?folder=/home/${local.username}/${data.coder_parameter.FOLDER.value}"
+  url          = "http://localhost:13337/?workspace=/home/${local.username}/fastapi.code-workspace"
   icon         = "/icon/code.svg"
   subdomain    = false
   share        = "owner"
