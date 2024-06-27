@@ -9,8 +9,16 @@
     },
     "folders": [
         {
-            "path": "/home/coder/src",
-            "name": "src"
+            "path": "/home/coder/dwh-pipelines",
+            "name": "dwh-pipelines"
+        },
+        {
+            "path": "/home/coder/dwh-definitions",
+            "name": "dwh-definitions"
+        },
+        {
+            "path": "/home/coder/dwh-airflow",
+            "name": "dwh-airflow"
         }
     ],
     "settings": {

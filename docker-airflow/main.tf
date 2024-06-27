@@ -15,19 +15,6 @@ locals {
   username = data.coder_workspace.me.owner
 }
 
-data "coder_parameter" "REPO" {
-  name        = "Repository URL"
-  type        = "string"
-  description = "Git repository to fetch"
-}
-
-data "coder_parameter" "FOLDER" {
-  name        = "Working directory"
-  type        = "string"
-  default     = "src"
-  description = "Folder contains code"
-}
-
 data "coder_provisioner" "me" {
 }
 
@@ -46,12 +33,11 @@ resource "coder_agent" "main" {
     # Prepare user home with default files on first start.
     if [ ! -f ~/.init_done ]; then
       cp -rT /etc/skel ~
-      git clone ${data.coder_parameter.REPO.value} "/home/${local.username}/${data.coder_parameter.FOLDER.value}"
+      git clone --recurse-submodules https://github.com/profcomff/dwh-airflow ~/dwh-airflow
+      ln -s ~/dwh-airflow/pipelines ~/dwh-pipelines
+      git clone https://github.com/profcomff/dwh-definitions ~/dwh-definitions
       sed -i -e \
-        's/\"path\": \"\/home\/coder\/src\"/\"path\": \"\/home\/${local.username}\/${data.coder_parameter.FOLDER.value}\"/g' \
-        /home/${local.username}/airflow.code-workspace
-      sed -i -e \
-        's/\"name\": \"src\"/\"name\": \"${data.coder_parameter.FOLDER.value}\"/g' \
+        's/\"path\": \"\/home\/coder\//\"path\": \"\/home\/${local.username}\//g' \
         /home/${local.username}/airflow.code-workspace
       touch ~/.init_done
     fi
@@ -59,6 +45,14 @@ resource "coder_agent" "main" {
     # install and start code-server
     curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix=/tmp/code-server --version 4.19.1
     /tmp/code-server/bin/code-server --auth none --port 13337 >/tmp/code-server.log 2>&1 &
+
+    # Start local airflow
+    export
+    sudo cp ~/dwh-airflow/start_local.sh /start_inc.sh
+    sudo rm -rf /airflow/dags/dwh-pipelines
+    sudo mkdir -p /airflow/dags
+    sudo ln -s ~/dwh-airflow/pipelines /airflow/dags/dwh-pipelines
+    /start.sh
   EOT
 
   # These environment variables allow you to make Git commits right away after creating a
@@ -227,8 +221,10 @@ resource "docker_container" "database" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}-db"
   hostname = "${data.coder_workspace.me.name}-db"
   env = [
-    "POSTGRES_USER=${data.coder_workspace.me.owner}",
-    "POSTGRES_PASSWORD=${data.coder_workspace.me.owner}"
+    "POSTGRES_HOST_AUTH_METHOD=trust",
+    "POSTGRES_USER=airflow",
+    "POSTGRES_PASSWORD=airflow",
+    "POSTGRES_DB=airflow"
   ]
   host {
     host = "host.docker.internal"
@@ -238,6 +234,12 @@ resource "docker_container" "database" {
     container_path = "/var/lib/postgresql/data"
     volume_name    = docker_volume.db_volume.name
     read_only      = false
+  }
+  upload {
+    file = "/docker-entrypoint-initdb.d/start_inc.sql"
+    content = <<-EOT
+    CREATE ROLE postgres WITH SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN REPLICATION BYPASSRLS PASSWORD 'postgres';
+    EOT
   }
 
   labels {
@@ -286,7 +288,9 @@ resource "docker_container" "workspace" {
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
   hostname = data.coder_workspace.me.name
   entrypoint = ["sh", "-c", replace(coder_agent.main.init_script, "/localhost|127\\.0\\.0\\.1/", "host.docker.internal")]
-  env        = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
+  env        = [
+    "CODER_AGENT_TOKEN=${coder_agent.main.token}",
+  ]
   host {
     host = "host.docker.internal"
     ip   = "host-gateway"
