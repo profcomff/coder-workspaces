@@ -1,11 +1,19 @@
 {
     "extensions": {
         "recommendations": [
-
+            "cweijan.dbclient-jdbc",
+            "cweijan.vscode-database-client2",
+            "eamodio.gitlens",
+            "ms-python.black-formatter",
+            "ms-python.debugpy",
+            "ms-python.isort",
+            "ms-python.python",
+            "ms-python.vscode-pylance",
+            "ms-toolsai.jupyter",
+            "rangav.vscode-thunder-client",
+            "redhat.vscode-yaml",
         ],
-        "unwantedRecommendations": [
-
-        ]
+        "unwantedRecommendations": []
     },
     "folders": [
         {

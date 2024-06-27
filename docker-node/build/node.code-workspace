@@ -1,11 +1,16 @@
 {
     "extensions": {
         "recommendations": [
-
+            "Vue.volar",
+            "Vue.vscode-typescript-vue-plugin",
+            "dbaeumer.vscode-eslint",
+            "esbenp.prettier-vscode",
+            "formulahendry.auto-close-tag",
+            "formulahendry.auto-rename-tag",
+            "steoates.autoimport",
+            "vunguyentuan.vscode-css-variables",
         ],
-        "unwantedRecommendations": [
-
-        ]
+        "unwantedRecommendations": []
     },
     "folders": [
         {
@@ -20,22 +25,13 @@
             "*.proto": "${capture}.pb.h, ${capture}.grpc.pb.h, ${capture}.pb.h_serialized.cpp, ${capture}.pb.cc, ${capture}.grpc.pb.cc, ${capture}.pb.go, ${capture}_pb2.py, ${capture}_pb2_grpc.py, ${capture}_pb2.pyi",
             "*.fbs": "${capture}.fbs.h, ${capture}.iter.fbs.h, ${capture}.fbs.cpp, ${capture}.py3.fbs.pysrc, ${capture}.fbs.gosrc"
         },
-        "python.analysis.autoSearchPaths": false,
-        "python.analysis.diagnosticMode": "openFilesOnly",
-        "python.analysis.enablePytestSupport": false,
-        "python.analysis.indexing": true,
-        "python.languageServer": "Pylance",
-        "python.testing.autoTestDiscoverOnSaveEnabled": false,
         "search.followSymlinks": false,
         "task.autoDetect": "off",
         "typescript.suggest.autoImports": false,
         "typescript.tsc.autoDetect": "off",
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"css.validate": false,
         "vsicons.projectDetection.disableDetect": true,
-        "python.analysis.persistAllIndices": true,
-        "[python]": {
-            "editor.defaultFormatter": "ms-python.black-formatter",
-            "editor.formatOnSaveMode": "file"
-        },
         "files.watcherExclude": {
             "**": true
         },
@@ -43,11 +39,56 @@
     "tasks": {
         "version": "2.0.0",
         "tasks": [
-        ]
+            {
+                "label": "Configure",
+                "type": "shell",
+                "command": "pnpm install",
+            },
+            {
+                "label": "Run local",
+                "type": "shell",
+                "command": "pnpm dev",
+            },
+            {
+                "label": "Build",
+                "type": "shell",
+                "command": "pnpm build",
+                "group": {
+                    "kind": "build",
+                    "isDefault": true,
+                },
+            },
+            {
+                "label": "Test",
+                "type": "shell",
+                "command": "pnpm test",
+                "group": {
+                    "kind": "test",
+                    "isDefault": true,
+                },
+            },
+        ],
     },
     "launch": {
         "version": "0.2.0",
         "configurations": [
+            {
+                "name": "Launch dev",
+                "request": "launch",
+                "runtimeArgs": [
+                    "dev"
+                ],
+                "runtimeExecutable": "pnpm",
+                "skipFiles": [
+                    "<node_internals>/**"
+                ],
+                "type": "node",
+                "serverReadyAction": {
+                    "pattern": "Local:   http://localhost:([0-9]+)/",
+                    "uriFormat": "http://localhost:%s",
+                    "action": "openExternally",
+                },
+            },
         ]
     }
 }

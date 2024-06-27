@@ -1,11 +1,17 @@
 {
     "extensions": {
         "recommendations": [
-
+            "cweijan.dbclient-jdbc",
+            "cweijan.vscode-database-client2",
+            "eamodio.gitlens",
+            "ms-python.black-formatter",
+            "ms-python.isort",
+            "ms-python.python",
+            "ms-python.vscode-pylance",
+            "ms-toolsai.jupyter",
+            "redhat.vscode-yaml",
         ],
-        "unwantedRecommendations": [
-
-        ]
+        "unwantedRecommendations": []
     },
     "folders": [
         {
@@ -34,6 +40,11 @@
         "python.analysis.indexing": true,
         "python.languageServer": "Pylance",
         "python.testing.autoTestDiscoverOnSaveEnabled": false,
+        "python.testing.pytestArgs": [
+            "tests"
+        ],
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestEnabled": true,
         "search.followSymlinks": false,
         "task.autoDetect": "off",
         "typescript.suggest.autoImports": false,
@@ -50,12 +61,22 @@
     },
     "tasks": {
         "version": "2.0.0",
-        "tasks": [
-        ]
+        "tasks": []
     },
     "launch": {
         "version": "0.2.0",
         "configurations": [
+            // {
+            //     "name": "Python Debugger: FastAPI",
+            //     "type": "debugpy",
+            //     "request": "launch",
+            //     "module": "uvicorn",
+            //     "args": [
+            //         "backend.routes.base:app",   // Disabled because of that
+            //         "--reload"
+            //     ],
+            //     "jinja": true
+            // }
         ]
     }
 }
