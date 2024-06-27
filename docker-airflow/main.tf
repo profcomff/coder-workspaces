@@ -49,10 +49,10 @@ resource "coder_agent" "main" {
       git clone ${data.coder_parameter.REPO.value} "/home/${local.username}/${data.coder_parameter.FOLDER.value}"
       sed -i -e \
         's/\"path\": \"\/home\/coder\/src\"/\"path\": \"\/home\/${local.username}\/${data.coder_parameter.FOLDER.value}\"/g' \
-        /home/${local.username}/fastapi.code-workspace
+        /home/${local.username}/airflow.code-workspace
       sed -i -e \
         's/\"name\": \"src\"/\"name\": \"${data.coder_parameter.FOLDER.value}\"/g' \
-        /home/${local.username}/fastapi.code-workspace
+        /home/${local.username}/airflow.code-workspace
       touch ~/.init_done
     fi
 
