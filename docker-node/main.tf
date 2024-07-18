@@ -54,6 +54,8 @@ resource "coder_agent" "main" {
         's/\"name\": \"src\"/\"name\": \"${data.coder_parameter.FOLDER.value}\"/g' \
         /home/${local.username}/node.code-workspace
       touch ~/.init_done
+
+      sh -c "cd /home/${local.username}/${data.coder_parameter.FOLDER.value} && pnpm i"
     fi
 
     # install and start code-server
