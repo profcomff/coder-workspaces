@@ -28,5 +28,6 @@ RUN sudo chown -R ${USER} /home/${USER} \
 
 ENV AIRFLOW_ENV=DEV
 ENV AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+ENV DB_DSN=postgresql+psycopg2://postgres:postgres@postgres:5432/dwh
 
 CMD ["/bin/zsh"]
