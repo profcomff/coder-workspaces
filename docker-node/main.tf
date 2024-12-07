@@ -12,7 +12,7 @@ terraform {
 }
 
 locals {
-  username = data.coder_workspace.me.owner
+  username = data.coder_workspace_owner.me.name
 }
 
 data "coder_parameter" "REPO" {
@@ -35,6 +35,10 @@ provider "docker" {
 }
 
 data "coder_workspace" "me" {
+
+}
+
+data "coder_workspace_owner" "me" {
 }
 
 resource "coder_agent" "main" {
@@ -68,10 +72,10 @@ resource "coder_agent" "main" {
   # You can remove this block if you'd prefer to configure Git manually or using
   # dotfiles. (see docs/dotfiles.md)
   env = {
-    GIT_AUTHOR_NAME     = coalesce(data.coder_workspace.me.owner_name, data.coder_workspace.me.owner)
-    GIT_AUTHOR_EMAIL    = "${data.coder_workspace.me.owner_email}"
-    GIT_COMMITTER_NAME  = coalesce(data.coder_workspace.me.owner_name, data.coder_workspace.me.owner)
-    GIT_COMMITTER_EMAIL = "${data.coder_workspace.me.owner_email}"
+    GIT_AUTHOR_NAME     = coalesce(data.coder_workspace_owner.me.full_name, data.coder_workspace_owner.me.name)
+    GIT_AUTHOR_EMAIL    = "${data.coder_workspace_owner.me.email}"
+    GIT_COMMITTER_NAME  = coalesce(data.coder_workspace_owner.me.full_name, data.coder_workspace_owner.me.name)
+    GIT_COMMITTER_EMAIL = "${data.coder_workspace_owner.me.email}"
   }
 
   # The following metadata blocks are optional. They are used to display
@@ -158,11 +162,11 @@ resource "coder_app" "code-server" {
 }
 
 resource "docker_network" "private_network" {
-  name = "coder-${data.coder_workspace.me.id}-internal"
+  name = "coder-${data.coder_workspace_owner.me.id}-internal"
 }
 
 resource "docker_volume" "home_volume" {
-  name = "coder-${data.coder_workspace.me.id}-home"
+  name = "coder-${data.coder_workspace_owner.me.id}-home"
   # Protect the volume from being deleted due to changes in attributes.
   lifecycle {
     ignore_changes = all
@@ -170,7 +174,7 @@ resource "docker_volume" "home_volume" {
   # Add labels in Docker to keep track of orphan resources.
   labels {
     label = "coder.owner"
-    value = data.coder_workspace.me.owner
+    value = data.coder_workspace_owner.me.name
   }
   labels {
     label = "coder.owner_id"
@@ -178,13 +182,13 @@ resource "docker_volume" "home_volume" {
   }
   labels {
     label = "coder.workspace_id"
-    value = data.coder_workspace.me.id
+    value = data.coder_workspace_owner.me.id
   }
   # This field becomes outdated if the workspace is renamed but can
   # be useful for debugging or cleaning out dangling volumes.
   labels {
     label = "coder.workspace_name_at_creation"
-    value = data.coder_workspace.me.name
+    value = data.coder_workspace_owner.me.name
   }
   labels {
     label = "com.docker.compose.project"
@@ -193,7 +197,7 @@ resource "docker_volume" "home_volume" {
 }
 
 resource "docker_image" "main" {
-  name = "coder-${data.coder_workspace.me.id}"
+  name = "coder-${data.coder_workspace_owner.me.id}"
   build {
     context = "./build"
     build_args = {
@@ -208,8 +212,8 @@ resource "docker_image" "main" {
 resource "docker_container" "workspace" {
   count = data.coder_workspace.me.start_count
   image = docker_image.main.name
-  name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
-  hostname = data.coder_workspace.me.name
+  name = "coder-${data.coder_workspace_owner.me.name}-${lower(data.coder_workspace_owner.me.name)}"
+  hostname = data.coder_workspace_owner.me.name
   entrypoint = ["sh", "-c", replace(coder_agent.main.init_script, "/localhost|127\\.0\\.0\\.1/", "host.docker.internal")]
   env        = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
   host {
@@ -224,7 +228,7 @@ resource "docker_container" "workspace" {
 
   labels {
     label = "coder.owner"
-    value = data.coder_workspace.me.owner
+    value = data.coder_workspace_owner.me.name
   }
   labels {
     label = "coder.owner_id"
@@ -232,11 +236,11 @@ resource "docker_container" "workspace" {
   }
   labels {
     label = "coder.workspace_id"
-    value = data.coder_workspace.me.id
+    value = data.coder_workspace_owner.me.id
   }
   labels {
     label = "coder.workspace_name"
-    value = data.coder_workspace.me.name
+    value = data.coder_workspace_owner.me.name
   }
   labels {
     label = "com.docker.compose.project"
