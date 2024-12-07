@@ -166,7 +166,7 @@ resource "docker_volume" "home_volume" {
   }
   labels {
     label = "coder.owner_id"
-    value = data.coder_workspace.me.owner_id
+    value = data.coder_workspace_owner.me.id
   }
   labels {
     label = "coder.workspace_id"
@@ -197,7 +197,7 @@ resource "docker_volume" "db_volume" {
   }
   labels {
     label = "coder.owner_id"
-    value = data.coder_workspace.me.owner_id
+    value = data.coder_workspace_owner.me.id
   }
   labels {
     label = "coder.workspace_id"
@@ -248,7 +248,7 @@ resource "docker_container" "database" {
   }
   labels {
     label = "coder.owner_id"
-    value = data.coder_workspace.me.owner_id
+    value = data.coder_workspace_owner.me.id
   }
   labels {
     label = "coder.workspace_id"
@@ -307,7 +307,7 @@ resource "docker_container" "workspace" {
   }
   labels {
     label = "coder.owner_id"
-    value = data.coder_workspace.me.owner_id
+    value = data.coder_workspace_owner.me.id
   }
   labels {
     label = "coder.workspace_id"
