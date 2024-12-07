@@ -161,6 +161,14 @@ resource "docker_volume" "home_volume" {
   }
   # Add labels in Docker to keep track of orphan resources.
   labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
+  }
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
+  }
+  labels {
     label = "coder.workspace_id"
     value = data.coder_workspace.me.id
   }
@@ -183,6 +191,14 @@ resource "docker_volume" "db_volume" {
     ignore_changes = all
   }
   # Add labels in Docker to keep track of orphan resources.
+  labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
+  }
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
+  }
   labels {
     label = "coder.workspace_id"
     value = data.coder_workspace.me.id
@@ -224,6 +240,15 @@ resource "docker_container" "database" {
     content = <<-EOT
     CREATE ROLE postgres WITH SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN REPLICATION BYPASSRLS PASSWORD 'postgres';
     EOT
+  }
+
+  labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
+  }
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
   }
   labels {
     label = "coder.workspace_id"
@@ -276,6 +301,14 @@ resource "docker_container" "workspace" {
     read_only      = false
   }
 
+  labels {
+    label = "coder.owner"
+    value = data.coder_workspace.me.owner
+  }
+  labels {
+    label = "coder.owner_id"
+    value = data.coder_workspace.me.owner_id
+  }
   labels {
     label = "coder.workspace_id"
     value = data.coder_workspace.me.id
