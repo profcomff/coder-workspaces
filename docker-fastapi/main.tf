@@ -160,7 +160,27 @@ resource "coder_app" "code-server" {
 }
 
 resource "docker_network" "private_network" {
-  name = "coder-${data.coder_workspace_owner.me.id}-${lower(data.coder_workspace.me.name)}-internal"
+  name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}-internal"
+}
+
+# See https://registry.coder.com/modules/jetbrains-gateway
+module "jetbrains_gateway" {
+  count  = data.coder_workspace.me.start_count
+  source = "registry.coder.com/modules/jetbrains-gateway/coder"
+
+  # JetBrains IDEs to make available for the user to select
+  jetbrains_ides = ["IU", "PY", "WS", "PS", "RD", "CL", "GO", "RM"]
+  default        = "PY"
+
+  # Default folder to open when starting a JetBrains IDE
+  folder = "/home/coder"
+
+  # This ensures that the latest version of the module gets downloaded, you can also pin the module version to prevent breaking changes in production.
+  version = ">= 1.0.0"
+
+  agent_id   = coder_agent.main.id
+  agent_name = "main"
+  order      = 2
 }
 
 resource "docker_volume" "home_volume" {
