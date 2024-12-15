@@ -160,7 +160,7 @@ resource "coder_app" "code-server" {
 }
 
 resource "docker_network" "private_network" {
-  name = "coder-${data.coder_workspace_owner.me.id}-internal"
+  name = "coder-${data.coder_workspace_owner.me.id}-${data.coder_workspace.me.id}-internal"
 }
 
 resource "docker_volume" "home_volume" {
